@@ -31,12 +31,20 @@ class LoadImageFromBase64:
 
 
     def load_image(self, data):
+        if not data:
+            return None, None
+        
         if isinstance(data, str) and data.startswith('data:'):
             uri_match = re.match(r'^data:\w+\/\w+;base64,(.*)$', data)
             if uri_match:
                 data = uri_match[1]
-                
+
+        if not data:
+            return None, None
+            
         nparr = np.frombuffer(base64.b64decode(data), np.uint8)
+        if len(nparr) == 0:
+            return None, None
 
         result = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
         channels = cv2.split(result)
